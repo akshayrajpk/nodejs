@@ -1,0 +1,317 @@
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Growth Chart</title>
+    <style>
+        .div {
+            width: 350px;
+            background: rgb(240, 241, 243);
+            border-radius: 10px;
+            overflow: auto;
+            padding: 42px 55px 45px 55px;
+        }
+
+        .maindiv {
+            width: 100%;
+            min-height: 60vh;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            padding: 5px;
+        }
+
+        .input {
+            width: 90%;
+            background: white;
+            font-family: Poppins-Medium;
+            font-size: 18px;
+            color: #333333;
+            line-height: 1.2;
+            padding: 0 5px;
+        }
+
+        .span {
+            position: absolute;
+            display: block;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+        }
+
+        .btn {
+            background: rgb(38, 176, 87);
+            display: inline-flex;
+            justify-content: center;
+            padding: 10 50px;
+            width: 30%;
+            height: 50px;
+            border-radius: 10px;
+            font-family: Poppins-Medium;
+            font-size: 18px;
+            color: rgb(250, 250, 250);
+            line-height: 1.2;
+            padding: 10px 90px;
+        }
+
+        .title {
+            display: block;
+            font-family: Poppins-Bold;
+            font-size: 39px;
+            color: #000000;
+            line-height: 1.2;
+            text-align: center;
+            padding-bottom: 40px;
+        }
+
+        .titleSpan {
+            font-size: 20px;
+            font-family: "Arial Black", Gadget, sans-serif;
+            float: right;
+        }
+
+        .label {
+            font-size: 16px;
+            font-family: "Arial Black", Gadget, sans-serif;
+            font-weight: lighter;
+        }
+
+        .mandatory {
+            color: red;
+            font-size: 14px;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div>
+        <span>
+            <select id="language" onchange="languageCheck()">
+                <option value="English" selected="selected">English</option>
+                <option value="French">French</option>
+            </select>
+        </span>
+        <span class="titleSpan"><a href="/"><label id="navigator"> EXIT </label></a></span>
+    </div>
+
+    <div class="maindiv" style="padding-top:0px;">
+        <div class="div">
+            <span class="title" id="heading">Sign Up</span>
+            <form style="padding-left: 20px;">
+                <label id="fnamelabel" class="label"> First Name </label>&nbsp;<label class="mandatory">*</label><br>
+                <input class="input" type="text" name="fname" id="fname" placeholder="Enter The First Name"
+                    onkeypress="return validateName(this,event);">
+                <br><br>
+                <label id="lnamelabel" class="label"> Last Name </label><br>
+                <input class="input" type="text" name="lname" id="lname" placeholder="Enter The Last Name"
+                    onkeypress="return validateName(this,event);">
+                <br><br>
+                <label id="idlabel" class="label"> Employee ID </label>&nbsp;<label class="mandatory">*</label>
+                &nbsp;<label id="idnote" class="mandatory">(This will be your User Name)</label>
+                <br>
+                <input class="input" type="text" name="eid" id="eid" placeholder="Eg:(AA123456)">
+                <br><br>
+                <label id="passlabel" class="label"> Password </label>&nbsp;<label class="mandatory">*</label>
+                &nbsp;<label id="passnote" class="mandatory">(Minimum 8 characters. Should include 1 Upper Case,
+                    1 Lower Case, 1 Digit, 1 Special Character)</label>
+                <br>
+                <input class="input" type="password" name="password" id="password" placeholder="Enter The Password">
+                <br><br>
+                <label id="cpasslabel" class="label"> Re-Enter Password </label>&nbsp;<label
+                    class="mandatory">*</label><br>
+                <input class="input" type="password" name="cpassword" id="cpassword"
+                    placeholder="Re-Enter same password">
+                <br><br>
+                <label id="maillabel" class="label"> Email </label>&nbsp;<label class="mandatory">*</label><br>
+                <input class="input" type="text" name="mail" id="mail" placeholder="Enter your Email-Id">
+                <br><br>
+                <div>
+                    <center>
+                        <span>
+                            <input id="signup" class="btn" type="button" value="Sign Up" onclick="register()">
+                        </span>
+                    </center>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>
+        var fname;
+        var lname;
+        var pass;
+        var confirmPass;
+        var eid;
+        var email;
+
+        //Excuted when window is loaded. Detects language selected from server and updates the language in dropdown.
+        //window.history.forward(); Disables functionality of back button on browser.
+        window.onload = function () {
+            window.history.forward();
+            if ("<%= language %>" == "French") {
+                document.getElementById("language").value = "French";
+                languageCheck();
+            }
+        }
+
+        //Check the language selected in dropdown and returns the same.
+        function languagePreference() {
+            var dropDown = document.getElementById("language");
+            var optionSelected = dropDown.options[dropDown.selectedIndex].value;
+            return optionSelected;
+        }
+
+        //Function to update the webpage contents based on the language selected.
+        function languageCheck() {
+            var optionSelected = languagePreference();
+            if (optionSelected == "French") {
+                document.getElementById('heading').innerHTML = "S'inscrire";
+                document.getElementById('fnamelabel').innerHTML = "Prénom";
+                document.getElementById("fname").placeholder = "Entrez le prénom";
+                document.getElementById('lnamelabel').innerHTML = "Nom de famille";
+                document.getElementById("lname").placeholder = "Entrez le nom de famille";
+                document.getElementById('idlabel').innerHTML = "ID d'employé";
+                document.getElementById("eid").placeholder = "Par exemple:(AA123456)";
+                document.getElementById('passlabel').innerHTML = "Mot de passe";
+                document.getElementById("password").placeholder = "Entrer le mot de passe";
+                document.getElementById('cpasslabel').innerHTML = "Retaper le mot de passe";
+                document.getElementById("cpassword").placeholder = "Entrez à nouveau le même mot de passe";
+                document.getElementById('maillabel').innerHTML = "Email";
+                document.getElementById("mail").placeholder = "Saisissez votre e-mail";
+                document.getElementById("signup").value = "S'inscrire";
+                document.getElementById('navigator').innerHTML = "SORTIE";
+                document.getElementById('idnote').innerHTML = "(Ce sera votre nom d'utilisateur)";
+                document.getElementById('passnote').innerHTML = "(8 caractères minimum. Doit inclure 1 majuscule, 1 minuscule, 1 chiffre, 1 caractère spécial)";
+            } else {
+                document.getElementById('heading').innerHTML = 'Sign Up';
+                document.getElementById('fnamelabel').innerHTML = 'First Name';
+                document.getElementById("fname").placeholder = "Enter The First Name";
+                document.getElementById('lnamelabel').innerHTML = "Last Name";
+                document.getElementById("lname").placeholder = "Enter The Last Name";
+                document.getElementById('idlabel').innerHTML = "Employee ID";
+                document.getElementById("eid").placeholder = "Eg:(AA123456)";
+                document.getElementById('passlabel').innerHTML = "Password";
+                document.getElementById("password").placeholder = "Enter The Password";
+                document.getElementById('cpasslabel').innerHTML = "Re-Enter Password";
+                document.getElementById("cpassword").placeholder = "Re-Enter same password";
+                document.getElementById('maillabel').innerHTML = "Email";
+                document.getElementById("mail").placeholder = "Enter your Email-Id";
+                document.getElementById("signup").value = "Sign Up";
+                document.getElementById('navigator').innerHTML = "EXIT";
+                document.getElementById('idnote').innerHTML = "(This will be your User Name)";
+                document.getElementById('passnote').innerHTML = "(Minimum 8 characters. Should include 1 Upper Case, 1 Lower Case, 1 Digit, 1 Special Character)";
+            }
+        }
+
+        //Function to obtain the contents of UI elements (user inputs).
+        function readInputData() {
+            fname = document.getElementById("fname").value;
+            lname = document.getElementById("lname").value;
+            eid = document.getElementById("eid").value;
+            pass = document.getElementById("password").value;
+            confirmPass = document.getElementById("cpassword").value;
+            email = document.getElementById("mail").value;
+        }
+
+        //Validate the user inputs.
+        function dataCheck() {
+            var optionSelected = languagePreference();
+            if (fname == "" || pass == "" || confirmPass == "" || eid == "" || email == ""){
+                if (optionSelected == "French")
+                    alert("Please fill all the fields marked as mandatory ( * )");
+                else
+                    alert("Please fill all the fields marked as mandatory ( * )");
+            }                
+            else if (!(eid.match(/^[a-zA-Z]{2}[0-9]{6}$/))){
+                if (optionSelected == "French")
+                    alert("Entrez un ID d'employé valide");
+                else
+                    alert('Enter a valid Employee ID');
+            }                
+            else if (!(pass == confirmPass)){
+                if (optionSelected == "French")
+                    alert("Les mots de passe ne correspondent pas");
+                else
+                    alert('Password\'s donot match');
+            }                
+            else if (!(email.match(/^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/))){
+                if (optionSelected == "French")
+                    alert('Entrez un ID e-mail valide');
+                else
+                    alert('Enter a valid Email ID');
+            }                
+            else if (!(pass.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/))){
+                if (optionSelected == "French")
+                    alert('Entrez un mot de passe fort');
+                else
+                    alert('Enter a strong password');
+            }                
+            else return true;
+        }
+
+        //Validate user inputs in the name textbox
+        function validateName(element, events) {
+            var charCode = (events.which) ? events.which : event.keyCode;
+            if (!((charCode >= 65 && charCode <= 90) || (charCode >= 97 && charCode <= 122) || charCode == 46))
+                return false;
+        }
+
+        //Function to check errors in fetch statement
+        function handleErrors(response) {
+            if (!response.ok) {
+                throw new Error(response.statusText);
+            }
+            return response;
+        }
+
+        function register() {
+            var optionSelected = languagePreference();
+            readInputData();
+            if (dataCheck()) 
+            {
+                var inputData;
+                fetch("/checkuid/" + eid).then(async (response) => {
+                    inputData = await response.json();
+                })
+                .then(() => 
+                {
+                    if (inputData.existing) 
+                    {
+                        if(optionSelected == "French"){
+                            if (confirm("ID utilisateur déjà enregistré \nCliquez sur OK pour vous connecter"))
+                                location.href = "/";
+                            }
+                            else {
+                                if (confirm("User Id Already Registered \nClick OK to Log In"))
+                                location.href = "/";
+                            }
+                    } 
+                    else 
+                    {
+                        fetch("/register/" + fname + "/" + lname + "/" + eid + "/" + email + "/" + pass)
+                        .then(handleErrors)
+                        .catch(error => {                   
+                            if(optionSelected == "French")
+                                alert("Échec de l'enregistrement \nServeur hors-service");
+                            else
+                                alert("Registration Failed \nServer Down");
+                        })
+                        .then(() => {
+                            //location.reload(true);
+                            if(optionSelected == "French")
+                                alert("Inscription réussie");
+                            else
+                                alert("Registration Successfull");
+                            location.href = "/";
+                       })
+                    }
+                })
+            }
+        }
+    </script>
+</body>
+
+</html>

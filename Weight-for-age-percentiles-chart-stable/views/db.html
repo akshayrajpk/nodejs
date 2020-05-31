@@ -1,0 +1,404 @@
+<html>
+
+<head>
+    <style>
+        .btn {
+            background: rgb(38, 176, 87);
+            display: inline-flex;
+            justify-content: center;
+            padding: 7px;
+            border-radius: 10px;
+            width: 10%;
+            font-family: Poppins-Medium;
+            font-size: 16px;
+            color: rgb(250, 250, 250);
+            padding: 10px 80px;
+        }
+
+        .input {
+            width: 20%;
+            background: white;
+            font-family: Poppins-Medium;
+            font-size: 18px;
+            color: #333333;
+            line-height: 1.2;
+            padding: 2 5px;
+        }
+
+        .labels {
+            font-size: 20px;
+            padding: 5 7px;
+        }
+
+        table {
+            border-collapse: collapse;
+            align-items: center;
+            width: 100%;
+        }
+
+        th,
+        td {
+            text-align: center;
+            padding: 8px;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        .titleSpan {
+            font-size: 19px;
+            font-family: "Arial Black", Gadget, sans-serif;
+        }
+    </style>
+</head>
+
+<body>
+    <div style="text-align: left;">
+        <span class="labels">
+            <select id="language" onchange="languageCheck()">
+                <option value="English" selected="selected">English</option>
+                <option value="French">French</option>
+            </select>
+        </span>
+        <span class="titleSpan"><a href="/endSession"><label id="navigator"> HOME </label></a></span>
+    </div>
+    <div style="text-align: center;">
+        <h1 class="title"><label id="idLabel"> Patient ID:</label> </h1>
+        <h2></h2>
+        <div style="background: rgb(240, 241, 243); border-radius: 10px;">
+            <span class="labels"><label id="monthLabel"> Month : </label></span>
+            <input class="input" type="number" name="month" id="month" placeholder="Enter Month"
+                onkeypress="return validateMonth(this,event);">
+            <span class="labels"><label id="weightLabel">Weight :</label></span>
+            <input class="input" type="text" name="weight" id="weight" placeholder="Enter Weight in Kg(s)"
+                onkeypress="return validateWeight(this,event);">
+            <br><br>
+            <input id="insert" class="btn" type="button" value="INSERT" onclick="insert()">
+            <input id="delete" class="btn" type="button" value="DELETE" onclick="remove()">
+            <input id="update" class="btn" type="button" value="UPDATE" onclick="update()">
+            <input id="chart" class="btn" type="button" value="VIEW CHART" onclick="sender()">
+            <br><br>
+        </div>
+
+        <table cellpadding="7" cellspacing="7">
+            <tr>
+
+
+                <th id="tableHeadMonth">MONTHS</th>
+                <th id="tableHeadWeight">WEIGHT</th>
+            </tr>
+           
+            <tr>
+                <td colspan="3">No Data</td>
+            </tr>
+            
+        </table>
+        </divstyle="text-align: center;">
+
+
+        <script>
+            //Excuted when window is loaded. Detects language selected from server and updates the language in dropdown.
+            //window.history.forward(); Disables functionality of back button on browser.
+            window.onload = function () {
+                window.history.forward();
+                if ("<%= language %>" == "French") {
+                    document.getElementById("language").value = "French";
+                    languageCheck();
+                }
+            }
+
+            //Check the language selected in dropdown and returns the same.
+            function languagePreference() {
+                var dropDown = document.getElementById("language");
+                var optionSelected = dropDown.options[dropDown.selectedIndex].value;
+                return optionSelected;
+            }
+
+            //Function to update the webpage contents based on the language selected.
+            function languageCheck() {
+                var optionSelected = languagePreference();
+                if (optionSelected == "French") {
+                    document.getElementById('idLabel').innerHTML = "Patient ID:";
+                    document.getElementById('monthLabel').innerHTML = "Mois :";
+                    document.getElementById('weightLabel').innerHTML = "Poids :";
+                    document.getElementById("month").placeholder = "Entrez le mois";
+                    document.getElementById("weight").placeholder = "Entrez le poids en Kg (s)";
+                    document.getElementById("insert").value = "INSÉRER";
+                    document.getElementById("delete").value = "SUPPRIMER";
+                    document.getElementById("update").value = "MISE À JOUR";
+                    document.getElementById("chart").value = "VOIR LE TABLEAU";
+                    document.getElementById('tableHeadMonth').innerHTML = "MOIS";
+                    document.getElementById('tableHeadWeight').innerHTML = "POIDS";
+                    document.getElementById('navigator').innerHTML = "ACCUEIL";
+                } else {
+                    document.getElementById('idLabel').innerHTML = 'Patient ID:';
+                    document.getElementById('monthLabel').innerHTML = 'Month :';
+                    document.getElementById('weightLabel').innerHTML = 'Weight :';
+                    document.getElementById("month").placeholder = "Enter Month";
+                    document.getElementById("weight").placeholder = "Enter Weight in Kg(s)";
+                    document.getElementById("insert").value = "INSERT";
+                    document.getElementById("delete").value = "DELETE";
+                    document.getElementById("update").value = "UPDATE";
+                    document.getElementById("chart").value = "VIEW CHART";
+                    document.getElementById('tableHeadMonth').innerHTML = "MONTHS";
+                    document.getElementById('tableHeadWeight').innerHTML = "WEIGHT";
+                    document.getElementById('navigator').innerHTML = "HOME";
+                }
+            }
+
+            //data is the month and weight values from the Database
+            var data;
+            //month is the content of Textbox month in UI
+            var month;
+            //weight is the content of Textbox Weight in UI
+            var weight;
+            //pid is id obtained from the server
+            var pid;
+
+            //Function to obtain the contents of UI elements (user inputs).
+            function readInputData() {
+                data = < % -JSON.stringify(data) % > ;
+                month = document.getElementById("month").value;
+                weightVal = document.getElementById("weight").value;
+                weight = parseFloat(document.getElementById("weight").value);
+                pid = "<%=id.pid%>";
+            }
+
+            //Validate the user inputs.
+            function dataCheck() {
+                var optionSelected = languagePreference();
+                readInputData();
+                if (month === "" || weightVal == "" || pid === "") {
+                    if (optionSelected == "French")
+                        alert("Le mois et le poids ne doivent pas être vides");
+                    else
+                        alert("Month and Weight should not be empty");
+                } else if (month < 0 || month > 36) {
+                    if (optionSelected == "French")
+                        alert("Le mois doit être compris entre 0 et 36");
+                    else
+                        alert("Month should be between 0 and 36");
+                } else if (weight <= 0 || weight > 19) {
+                    if (optionSelected == "French")
+                        alert("Le poids doit être compris entre 0 et 19");
+                    else
+                        alert("Weight should be between 0 and 19");
+                } else {
+                    return true;
+                }
+            }
+
+            //Function to chect errors in fetch statement
+            function handleErrors(response) {
+                if (!response.ok) {
+                    throw new Error(response.statusText);
+                }
+                return response;
+            }
+
+            //Insert Data to the database
+            function insert() {
+                readInputData();
+                var index;
+                flag = true;
+                var optionSelect = languagePreference();
+                if (dataCheck()) {
+                    for (var index = 0; index < data.length; index += 1) {
+                        if (data[index].months == month) {
+                            flag = false;
+                            break;
+                        }
+                    }
+                    if (flag) {
+                        var reloadFlag = true;
+                        var get = "/addpost1/" + pid + "/" + month + "/" + weight;
+                        fetch(get)
+                            .then(handleErrors)
+                            .catch(error => {
+                                if (optionSelect == "French")
+                                    alert("Insertion infructueuse");
+                                else
+                                    alert("Insertion Unsuccessfull");
+                                reloadFlag = false;
+                            });
+                        fetch("/dbOperatorReload")
+                            .then(handleErrors)
+                            .catch(error => {
+                                if (optionSelect == "French")
+                                    alert("Serveur hors-service");
+                                else
+                                    alert("Server Down");
+                                reloadFlag = false;
+                            })
+                            .then(() => {
+                                location.reload(reloadFlag);
+                            });
+                    } else {
+                        if (optionSelect == "French") {
+                            if (confirm("Le mois existe déjà! \nCliquez sur OK pour mettre à jour")) {
+                                update();
+                            }
+                        } else {
+                            if (confirm("Month Already Exists! \nClick OK to Update")) {
+                                update();
+                            }
+                        }
+                    }
+                }
+            }
+
+            //Delete data from the database
+            function remove() {
+                readInputData();
+                var index;
+                flag = false;
+                var optionSelect = languagePreference();
+                if (dataCheck()) {
+                    for (var index = 0; index < data.length; index += 1) {
+                        if (data[index].months == month) {
+                            flag = true;
+                            break;
+                        }
+                    }
+                    if (flag) {
+                        var reloadFlag = true;
+                        var get = "/delete/" + pid + "/" + month + "/" + weight;
+                        fetch(get)
+                            .then(handleErrors)
+                            .catch(error => {
+                                if (optionSelect == "French")
+                                    alert("Suppression infructueuse");
+                                else
+                                    alert("Deletion Unsuccessfull");
+                                reloadFlag = false;
+                            });
+                        fetch("/dbOperatorReload")
+                            .then(handleErrors)
+                            .catch(error => {
+                                if (optionSelect == "French")
+                                    alert("Serveur hors-service");
+                                else
+                                    alert("Server Down");
+                                reloadFlag = false;
+                            })
+                            .then(() => {
+                                location.reload(reloadFlag);
+                            });
+                    } else {
+                        if (optionSelect == "French")
+                            alert("Le mois n'existe pas");
+                        else
+                            alert("Month does not exist");
+                    }
+                }
+            }
+
+            //Update the data in the database
+            function update() {
+                readInputData();
+                var index;
+                flag = false;
+                var optionSelect = languagePreference();
+                if (dataCheck()) {
+                    for (var index = 0; index < data.length; index += 1) {
+                        if (data[index].months == month) {
+                            flag = true;
+                            break;
+                        }
+                    }
+                    if (flag) {
+                        var reloadFlag = true;
+                        var get = "/update/" + pid + "/" + month + "/" + weight;
+                        fetch(get)
+                            .then(handleErrors)
+                            .catch(error => {
+                                if (optionSelect == "French")
+                                    alert("Mise à jour infructueuse");
+                                else
+                                    alert("Updation Unsuccessfull");
+                                reloadFlag = false;
+                            });
+                        fetch("/dbOperatorReload")
+                            .then(handleErrors)
+                            .catch(error => {
+                                if (optionSelect == "French")
+                                    alert("Serveur hors-service");
+                                else
+                                    alert("Server Down");
+                                reloadFlag = false;
+                            })
+                            .then(() => {
+                                location.reload(reloadFlag);
+                            });
+
+                    } else {
+                        if (optionSelect == "French")
+                            alert("Le mois n'existe pas \nEssayez d'insérer à la place");
+                        else
+                            alert("Month does not exist \nTry insert instead");
+                    }
+                }
+            }
+
+            //Function to display the chart.
+            function sender() {
+                readInputData();
+                var optionSelect = languagePreference();
+                fetch("/startChartSession");
+                fetch("/chart/" + pid + "/" + optionSelect)
+                    .then(handleErrors)
+                    .catch(error => {
+                        if (optionSelect == "French")
+                            alert("Serveur hors-service");
+                        else
+                            alert("Server Down");
+                    })
+                    .then(() => {
+                        location.href = "../../index.html";
+                    });
+            }
+
+            //Validate user inputs in the month textbox
+            function validateMonth(element, events) {
+                var charCode = (events.which) ? events.which : event.keyCode;
+                if (charCode < 48 || charCode > 57)
+                    return false;
+                var digits = document.getElementById('month');
+                if (digits.value.length >= 2)
+                    return false;
+            }
+
+            //Validate user inputs in the weight textbox
+            function validateWeight(element, events) {
+                var charCode = (events.which) ? events.which : event.keyCode;
+                var number = element.value.split('.');
+                if (charCode != 46 && charCode > 31 && (charCode < 48 || charCode > 57)) {
+                    return false;
+                }
+                if (number.length > 1 && charCode == 46) {
+                    return false;
+                }
+                //get the charat position
+                var caratPos = getSelectionStart(element);
+                var dotPos = element.value.indexOf(".");
+                if (caratPos > dotPos && dotPos > -1 && (number[1].length > 1)) {
+                    return false;
+                }
+                return true;
+            }
+
+            //returns the charAt position of the elements after "."
+            function getSelectionStart(element) {
+                if (element.createTextRange) {
+                    var range = document.selection.createRange().duplicate()
+                    range.moveEnd('character', element.value.length)
+                    if (range.text == '') return element.value.length
+                    return element.value.lastIndexOf(range.text)
+                } else return element.selectionStart;
+            }
+        </script>
+
+</body>
+
+</html>

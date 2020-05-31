@@ -1,0 +1,109 @@
+<html>
+    <body><h1 class="title" >Patient ID:<%= id.name %>  </h1><h2></h2>
+        <div style="background: rgb(240, 241, 243); border-radius: 10px;">
+        Month : 
+        <input class="input" type="number" name="month" id="month" placeholder="Enter month"> 
+        Weight:
+        <input class="input" type="number" name="weight" id="weight" placeholder="Enter weight in Kg(s)"> 
+        Index : 
+        <input class="input" type="number" name="index" id="index" placeholder="Enter Index To Delete"> 
+        <br><br>
+        <input type="button" value="INSERT" onclick="insert()">
+        <input type="button" value="DELETE" onclick="remove()">
+        <input type="button" value="UPDATE" onclick="update()">
+        <br><br>
+    </div>
+
+        <table  cellpadding="7" cellspacing="7">
+            <tr>
+              
+              <th>INDEX</th>
+              <th>MONTHS</th>
+              <th>WEIGHT</th>
+            </tr>
+            <% if(data.length){ 
+              for(var i = 0;i < data.length;i++) { %>
+            <tr>
+             
+              <td><%=data[i].id%></td>
+              <td><%=data[i].months%></td>
+              <td><%=data[i].weight%></td>
+            </tr>
+            <% }
+            }else{ %>
+            <tr>
+              <td colspan="3">No Data</td>
+            </tr>
+          <% } %>
+          </table>
+
+    <script>
+        function dataCheck(){
+            var month = document.getElementById("month").value;
+            var weight = document.getElementById("weight").value;
+            var pname = "<%=id.name%>";
+            //console.log(pname);
+            if(month === "" || weight === "" || pname === ""){
+                alert("Month and Weight should not be empty");
+            }
+            else if(month < 0 || month > 36){
+                alert("Month should be between 0 and 36");
+            }
+            else if(weight <= 0 || weight > 19){
+                alert("Weight should be between 0 and 19");
+            }
+            else{ return true; }
+        }
+
+        function insert() {           
+           var month = document.getElementById("month").value;
+           var weight = document.getElementById("weight").value;
+           var pname = "<%=id.name%>";
+           if( dataCheck()){
+           var get = "/addpost1/"+pname+"/"+month+"/"+weight;
+           console.log(get);
+           fetch(get);
+           location.reload(true);
+           }           
+       }
+
+       function remove() {           
+           var index = document.getElementById("index").value;
+           var pname = "<%=id.name%>";
+           if(index === ""){
+            alert("Index should not be empty");
+           }
+           else {
+           var get = "/delete/"+index;
+           console.log(get);
+           fetch(get);
+           location.reload(true);
+           }           
+       }
+
+       function update() {           
+           var month = document.getElementById("month").value;
+           var weight = document.getElementById("weight").value;
+           var pname = "<%=id.name%>";
+           if(month === "" || weight === ""){
+            alert("Month and Weight should not be empty");
+           }
+           else if(month < 0 || month > 36){
+                alert("Month should be between 0 and 36");
+            }
+            else if(weight <= 0 || weight > 19){
+                alert("Weight should be between 0 and 19");
+            }
+           else {
+           var get = "/update/"+pname+"/"+month+"/"+weight;
+           console.log(get);
+           fetch(get);
+           //location.href = get;
+           location.reload(true);
+           }           
+       }
+    
+    </script>
+
+    </body>
+</html>
