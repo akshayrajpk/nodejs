@@ -1,0 +1,4 @@
+{
+    "mongoUrl": "mongodb+srv://digitalshark:digitalshark123@cluster0.fy24p.mongodb.net/test?retryWrites=true&w=majority",
+    "jwtSecret" : "SecretToken"
+}
